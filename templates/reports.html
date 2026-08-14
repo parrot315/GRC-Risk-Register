@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2><i class="bi bi-file-earmark-bar-graph"></i> Reports &amp; Exports</h2>
+    <div class="subtitle">{{ total_risks }} risk(s) in the register &middot; Generated {{ generated_at }}</div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="grc-panel h-100">
+      <div class="panel-header"><i class="bi bi-table"></i> Risk Register</div>
+      <div class="panel-body d-flex flex-column">
+        <p class="text-muted flex-grow-1">Full risk register including inherent and residual risk, treatment plans, and ownership.</p>
+        <div class="d-grid gap-2">
+          <a href="{{ url_for('export_excel', report_type='register') }}" class="btn btn-grc-primary">
+            <i class="bi bi-file-earmark-excel"></i> Export Excel (.xlsx)
+          </a>
+          <a href="{{ url_for('print_report', report_type='register') }}" target="_blank" class="btn btn-outline-secondary">
+            <i class="bi bi-printer"></i> Printable HTML (Save as PDF)
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="grc-panel h-100">
+      <div class="panel-header"><i class="bi bi-pie-chart"></i> Risk Summary</div>
+      <div class="panel-body d-flex flex-column">
+        <p class="text-muted flex-grow-1">Aggregate counts by risk level, status, and treatment option — useful for management reporting.</p>
+        <div class="d-grid gap-2">
+          <a href="{{ url_for('export_excel', report_type='summary') }}" class="btn btn-grc-primary">
+            <i class="bi bi-file-earmark-excel"></i> Export Excel (.xlsx)
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="grc-panel h-100">
+      <div class="panel-header"><i class="bi bi-journal-check"></i> ISO 27001 Control Mapping</div>
+      <div class="panel-body d-flex flex-column">
+        <p class="text-muted flex-grow-1">Every Annex A control referenced in this register with the risks mapped to each control.</p>
+        <div class="d-grid gap-2">
+          <a href="{{ url_for('export_excel', report_type='iso_mapping') }}" class="btn btn-grc-primary">
+            <i class="bi bi-file-earmark-excel"></i> Export Excel (.xlsx)
+          </a>
+          <a href="{{ url_for('print_report', report_type='iso_mapping') }}" target="_blank" class="btn btn-outline-secondary">
+            <i class="bi bi-printer"></i> Printable HTML (Save as PDF)
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-info mt-4">
+  <i class="bi bi-info-circle"></i>
+  Printable HTML reports open in a new tab. Use your browser's <strong>Print &rarr; Save as PDF</strong>
+  option to generate a PDF copy for submission or archiving.
+</div>
+{% endblock %}

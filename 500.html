@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-{% block title %}Server Error{% endblock %}
-{% block content %}
-<div class="text-center py-5">
-  <h1 class="display-4 text-navy"><i class="bi bi-exclamation-octagon"></i> 500</h1>
-  <p class="lead">Something went wrong on the server. Please try again.</p>
-  <a href="{{ url_for('dashboard') }}" class="btn btn-grc-primary">Return to Dashboard</a>
-</div>
-{% endblock %}

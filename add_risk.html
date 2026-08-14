@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Add Risk{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2><i class="bi bi-plus-circle"></i> Add New Risk</h2>
+    <div class="subtitle">Complete the workflow: Asset → Threat → Vulnerability → Controls → Likelihood/Impact → Treatment</div>
+  </div>
+  <a href="{{ url_for('risks_list') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Register</a>
+</div>
+
+<form method="post" class="grc-panel" novalidate>
+  <div class="panel-body">
+
+    <div class="form-section-title">1. Asset &amp; Ownership</div>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Asset</label>
+        <select class="form-select" name="asset_id">
+          <option value="">-- Select Asset --</option>
+          {% for a in assets %}
+          <option value="{{ a.id }}" {{ 'selected' if form.get('asset_id')|string == a.id|string }}>{{ a.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Asset Owner</label>
+        <input type="text" class="form-control" name="asset_owner" value="{{ form.get('asset_owner','') }}" placeholder="e.g. IT Administrator">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Risk Owner</label>
+        <input type="text" class="form-control" name="risk_owner" value="{{ form.get('risk_owner','') }}" placeholder="Person accountable for treatment">
+      </div>
+    </div>
+
+    <div class="form-section-title">2. Threat, Vulnerability &amp; Existing Controls</div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Threat <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="threat" value="{{ form.get('threat','') }}" required placeholder="e.g. Phishing Attack">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Vulnerability <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="vulnerability" value="{{ form.get('vulnerability','') }}" required placeholder="e.g. Lack of email filtering">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Risk Description</label>
+        <textarea class="form-control" name="risk_description" rows="2" placeholder="Describe how the threat could exploit the vulnerability">{{ form.get('risk_description','') }}</textarea>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Existing Controls</label>
+        <textarea class="form-control" name="existing_controls" rows="2" placeholder="Controls currently in place, if any">{{ form.get('existing_controls','') }}</textarea>
+      </div>
+    </div>
+
+    <div class="form-section-title">3. Inherent Risk (Before Treatment)</div>
+    <div class="row g-3 align-items-center">
+      <div class="col-md-3">
+        <label class="form-label">Likelihood (1-5) <span class="text-danger">*</span></label>
+        <select class="form-select" id="likelihood" name="likelihood" required>
+          <option value="">-- Select --</option>
+          {% for v, label in likelihood_labels.items() %}
+          <option value="{{ v }}" {{ 'selected' if form.get('likelihood')|string == v|string }}>{{ v }} — {{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Impact (1-5) <span class="text-danger">*</span></label>
+        <select class="form-select" id="impact" name="impact" required>
+          <option value="">-- Select --</option>
+          {% for v, label in impact_labels.items() %}
+          <option value="{{ v }}" {{ 'selected' if form.get('impact')|string == v|string }}>{{ v }} — {{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <div class="calc-preview">
+          <div class="small text-muted mb-1">Auto-Calculated Inherent Risk</div>
+          <div class="calc-score" id="inherent-score-out">--</div>
+          <span class="badge-risk" id="inherent-level-out">--</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section-title">4. Risk Treatment</div>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Treatment Option <span class="text-danger">*</span></label>
+        <select class="form-select" name="risk_treatment" required>
+          <option value="">-- Select --</option>
+          {% for t in treatment_options %}
+          <option value="{{ t }}" {{ 'selected' if form.get('risk_treatment') == t }}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select class="form-select" name="status">
+          {% for s in status_options %}
+          <option value="{{ s }}" {{ 'selected' if form.get('status', 'Open') == s }}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Target Date</label>
+        <input type="date" class="form-control" name="target_date" value="{{ form.get('target_date','') }}">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Treatment Plan Description</label>
+        <textarea class="form-control" name="treatment_description" rows="2" placeholder="Describe the treatment approach">{{ form.get('treatment_description','') }}</textarea>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Proposed Controls</label>
+        <textarea class="form-control" name="proposed_controls" rows="2" placeholder="e.g. MFA + RBAC">{{ form.get('proposed_controls','') }}</textarea>
+      </div>
+    </div>
+
+    <div class="form-section-title">5. Residual Risk (After Treatment)</div>
+    <div class="row g-3 align-items-center">
+      <div class="col-md-3">
+        <label class="form-label">Residual Likelihood (1-5)</label>
+        <select class="form-select" id="residual_likelihood" name="residual_likelihood">
+          <option value="">-- Optional --</option>
+          {% for v, label in likelihood_labels.items() %}
+          <option value="{{ v }}" {{ 'selected' if form.get('residual_likelihood')|string == v|string }}>{{ v }} — {{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Residual Impact (1-5)</label>
+        <select class="form-select" id="residual_impact" name="residual_impact">
+          <option value="">-- Optional --</option>
+          {% for v, label in impact_labels.items() %}
+          <option value="{{ v }}" {{ 'selected' if form.get('residual_impact')|string == v|string }}>{{ v }} — {{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <div class="calc-preview">
+          <div class="small text-muted mb-1">Auto-Calculated Residual Risk</div>
+          <div class="calc-score" id="residual-score-out">--</div>
+          <span class="badge-risk" id="residual-level-out">--</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section-title">6. ISO/IEC 27001:2022 Control Mapping</div>
+    <div class="row g-2">
+      {% for c in iso_controls %}
+      <div class="col-md-6">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="iso_controls" value="{{ c.id }}" id="ctrl{{ c.id }}"
+                 {{ 'checked' if c.id|string in form.getlist('iso_controls') }}>
+          <label class="form-check-label" for="ctrl{{ c.id }}">
+            <strong>{{ c.control_id }}</strong> — {{ c.title }}
+          </label>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="form-section-title">7. Notes</div>
+    <textarea class="form-control" name="notes" rows="2" placeholder="Any additional notes">{{ form.get('notes','') }}</textarea>
+
+  </div>
+  <div class="panel-body border-top d-flex justify-content-end gap-2">
+    <a href="{{ url_for('risks_list') }}" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-grc-primary"><i class="bi bi-check-circle"></i> Save Risk</button>
+  </div>
+</form>
+{% endblock %}

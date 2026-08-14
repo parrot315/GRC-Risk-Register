@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}Edit Risk {{ risk.risk_code }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2><i class="bi bi-pencil-square"></i> Edit Risk — {{ risk.risk_code }}</h2>
+    <div class="subtitle">Update assessment details. Score and level recalculate automatically.</div>
+  </div>
+  <a href="{{ url_for('risk_details', risk_id=risk_id) }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Details</a>
+</div>
+
+<form method="post" class="grc-panel" novalidate>
+  <div class="panel-body">
+
+    <div class="form-section-title">1. Asset &amp; Ownership</div>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Asset</label>
+        <select class="form-select" name="asset_id">
+          <option value="">-- Select Asset --</option>
+          {% for a in assets %}
+          <option value="{{ a.id }}" {{ 'selected' if risk.asset_id|string == a.id|string }}>{{ a.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Asset Owner</label>
+        <input type="text" class="form-control" name="asset_owner" value="{{ risk.asset_owner or '' }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Risk Owner</label>
+        <input type="text" class="form-control" name="risk_owner" value="{{ risk.risk_owner or '' }}">
+      </div>
+    </div>
+
+    <div class="form-section-title">2. Threat, Vulnerability &amp; Existing Controls</div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Threat <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="threat" value="{{ risk.threat }}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Vulnerability <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="vulnerability" value="{{ risk.vulnerability }}" required>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Risk Description</label>
+        <textarea class="form-control" name="risk_description" rows="2">{{ risk.risk_description or '' }}</textarea>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Existing Controls</label>
+        <textarea class="form-control" name="existing_controls" rows="2">{{ risk.existing_controls or '' }}</textarea>
+      </div>
+    </div>
+
+    <div class="form-section-title">3. Inherent Risk (Before Treatment)</div>
+    <div class="row g-3 align-items-center">
+      <div class="col-md-3">
+        <label class="form-label">Likelihood (1-5) <span class="text-danger">*</span></label>
+        <select class="form-select" id="likelihood" name="likelihood" required>
+          {% for v, label in likelihood_labels.items() %}
+          <option value="{{ v }}" {{ 'selected' if risk.likelihood|string == v|string }}>{{ v }} — {{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Impact (1-5) <span class="text-danger">*</span></label>
+        <select class="form-select" id="impact" name="impact" required>
+          {% for v, label in impact_labels.items() %}
+          <option value="{{ v }}" {{ 'selected' if risk.impact|string == v|string }}>{{ v }} — {{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <div class="calc-preview">
+          <div class="small text-muted mb-1">Auto-Calculated Inherent Risk</div>
+          <div class="calc-score" id="inherent-score-out">{{ risk.inherent_score }}</div>
+          <span class="badge-risk {{ risk.inherent_level }}" id="inherent-level-out">{{ risk.inherent_level }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section-title">4. Risk Treatment</div>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Treatment Option <span class="text-danger">*</span></label>
+        <select class="form-select" name="risk_treatment" required>
+          {% for t in treatment_options %}
+          <option value="{{ t }}" {{ 'selected' if risk.risk_treatment == t }}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select class="form-select" name="status">
+          {% for s in status_options %}
+          <option value="{{ s }}" {{ 'selected' if risk.status == s }}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Target Date</label>
+        <input type="date" class="form-control" name="target_date" value="{{ risk.target_date or '' }}">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Treatment Plan Description</label>
+        <textarea class="form-control" name="treatment_description" rows="2">{{ risk.treatment_description or '' }}</textarea>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Proposed Controls</label>
+        <textarea class="form-control" name="proposed_controls" rows="2">{{ risk.proposed_controls or '' }}</textarea>
+      </div>
+    </div>
+
+    <div class="form-section-title">5. Residual Risk (After Treatment)</div>
+    <div class="row g-3 align-items-center">
+      <div class="col-md-3">
+        <label class="form-label">Residual Likelihood (1-5)</label>
+        <select class="form-select" id="residual_likelihood" name="residual_likelihood">
+          <option value="">-- Optional --</option>
+          {% for v, label in likelihood_labels.items() %}
+          <option value="{{ v }}" {{ 'selected' if risk.residual_likelihood|string == v|string }}>{{ v }} — {{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Residual Impact (1-5)</label>
+        <select class="form-select" id="residual_impact" name="residual_impact">
+          <option value="">-- Optional --</option>
+          {% for v, label in impact_labels.items() %}
+          <option value="{{ v }}" {{ 'selected' if risk.residual_impact|string == v|string }}>{{ v }} — {{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <div class="calc-preview">
+          <div class="small text-muted mb-1">Auto-Calculated Residual Risk</div>
+          <div class="calc-score" id="residual-score-out">{{ risk.residual_score or '--' }}</div>
+          <span class="badge-risk {{ risk.residual_level or '' }}" id="residual-level-out">{{ risk.residual_level or '--' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section-title">6. ISO/IEC 27001:2022 Control Mapping</div>
+    <div class="row g-2">
+      {% for c in iso_controls %}
+      <div class="col-md-6">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="iso_controls" value="{{ c.id }}" id="ctrl{{ c.id }}"
+                 {{ 'checked' if c.id in selected_controls or c.id|string in selected_controls }}>
+          <label class="form-check-label" for="ctrl{{ c.id }}">
+            <strong>{{ c.control_id }}</strong> — {{ c.title }}
+          </label>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="form-section-title">7. Notes</div>
+    <textarea class="form-control" name="notes" rows="2">{{ risk.notes or '' }}</textarea>
+
+  </div>
+  <div class="panel-body border-top d-flex justify-content-end gap-2">
+    <a href="{{ url_for('risk_details', risk_id=risk_id) }}" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-grc-primary"><i class="bi bi-check-circle"></i> Save Changes</button>
+  </div>
+</form>
+{% endblock %}

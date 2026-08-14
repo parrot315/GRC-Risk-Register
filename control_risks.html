@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ control.control_id }} — Mapped Risks{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2><i class="bi bi-journal-check"></i> {{ control.control_id }} — {{ control.title }}</h2>
+    <div class="subtitle">{{ control.theme }} Control &middot; {{ control.description }}</div>
+  </div>
+  <a href="{{ url_for('controls') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Controls</a>
+</div>
+
+<div class="grc-panel">
+  <div class="panel-header">Risks Mapped to This Control ({{ mapped_risks|length }})</div>
+  <div class="panel-body p-0">
+    <div class="table-responsive">
+      <table class="table table-grc mb-0">
+        <thead><tr><th>ID</th><th>Threat</th><th>Inherent Score</th><th>Level</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for r in mapped_risks %}
+          <tr>
+            <td><a href="{{ url_for('risk_details', risk_id=r.id) }}">{{ r.risk_code }}</a></td>
+            <td>{{ r.threat }}</td>
+            <td>{{ r.inherent_score }}</td>
+            <td><span class="badge-risk {{ r.inherent_level }}">{{ r.inherent_level }}</span></td>
+            <td><span class="badge-status">{{ r.status }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="text-center text-muted py-3">No risks currently mapped to this control.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,243 @@
+/* =========================================================
+   GRC Risk Register — Custom Styles
+   Palette: deep navy / slate with risk-level accent colors
+   ========================================================= */
+
+:root {
+  --grc-navy: #102a43;
+  --grc-navy-light: #1f4e79;
+  --grc-slate: #486581;
+  --grc-bg: #f4f6f9;
+  --grc-card-border: #e3e8ef;
+
+  --risk-low: #2e8b57;
+  --risk-low-bg: #e6f4ea;
+  --risk-medium: #d4a017;
+  --risk-medium-bg: #fdf3d6;
+  --risk-high: #d9682b;
+  --risk-high-bg: #fbe6d8;
+  --risk-critical: #b3261e;
+  --risk-critical-bg: #fbe0de;
+}
+
+body {
+  background-color: var(--grc-bg);
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #1a2634;
+}
+
+/* ---------- Navbar ---------- */
+.grc-navbar {
+  background: linear-gradient(135deg, var(--grc-navy) 0%, var(--grc-navy-light) 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.grc-navbar .navbar-brand { line-height: 1.2; }
+.brand-sub {
+  font-size: 0.68rem;
+  font-weight: 400;
+  opacity: 0.75;
+  letter-spacing: 0.03em;
+}
+.grc-navbar .nav-link {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.92rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+.grc-navbar .nav-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.grc-navbar .nav-link.active { background: rgba(255,255,255,0.18); color: #fff; font-weight: 600; }
+
+/* ---------- Footer ---------- */
+.grc-footer {
+  background: #fff;
+  border-top: 1px solid var(--grc-card-border);
+  color: #6b7a8f;
+}
+
+/* ---------- Page headers ---------- */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.page-header h2 {
+  font-weight: 700;
+  color: var(--grc-navy);
+  margin-bottom: 0.15rem;
+}
+.page-header .subtitle { color: #6b7a8f; font-size: 0.92rem; }
+
+/* ---------- KPI Cards ---------- */
+.kpi-card {
+  background: #fff;
+  border: 1px solid var(--grc-card-border);
+  border-radius: 12px;
+  padding: 1.1rem 1.3rem;
+  height: 100%;
+  box-shadow: 0 1px 3px rgba(16,42,67,0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(16,42,67,0.12); }
+.kpi-card .kpi-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7a8f;
+  font-weight: 600;
+}
+.kpi-card .kpi-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--grc-navy);
+  line-height: 1.2;
+}
+.kpi-card .kpi-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  color: #fff;
+}
+.kpi-icon.bg-navy { background: var(--grc-navy-light); }
+.kpi-icon.bg-critical { background: var(--risk-critical); }
+.kpi-icon.bg-high { background: var(--risk-high); }
+.kpi-icon.bg-medium { background: var(--risk-medium); }
+.kpi-icon.bg-low { background: var(--risk-low); }
+.kpi-icon.bg-open { background: var(--grc-slate); }
+.kpi-icon.bg-treated { background: #2e8b57; }
+.kpi-icon.bg-accepted { background: #6b5b95; }
+
+/* ---------- Badges for risk levels ---------- */
+.badge-risk {
+  font-weight: 600;
+  font-size: 0.78rem;
+  padding: 0.4em 0.7em;
+  border-radius: 6px;
+  display: inline-block;
+}
+.badge-risk.Low       { background: var(--risk-low-bg); color: var(--risk-low); }
+.badge-risk.Medium    { background: var(--risk-medium-bg); color: var(--risk-medium); }
+.badge-risk.High      { background: var(--risk-high-bg); color: var(--risk-high); }
+.badge-risk.Critical  { background: var(--risk-critical-bg); color: var(--risk-critical); }
+
+.badge-status {
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+  border-radius: 999px;
+  border: 1px solid var(--grc-card-border);
+  background: #f4f6f9;
+  color: var(--grc-slate);
+}
+
+/* ---------- Cards / panels ---------- */
+.grc-panel {
+  background: #fff;
+  border: 1px solid var(--grc-card-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(16,42,67,0.06);
+}
+.grc-panel .panel-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--grc-card-border);
+  font-weight: 700;
+  color: var(--grc-navy);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.grc-panel .panel-body { padding: 1.1rem 1.25rem; }
+
+/* ---------- Tables ---------- */
+.table-grc thead th {
+  background: var(--grc-navy);
+  color: #fff;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: none;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+.table-grc thead th a { color: #fff; text-decoration: none; }
+.table-grc tbody tr:hover { background-color: #f0f4f9; }
+.table-grc td { vertical-align: middle; font-size: 0.9rem; }
+
+/* ---------- Risk Matrix ---------- */
+.risk-matrix { border-collapse: separate; border-spacing: 4px; width: 100%; }
+.risk-matrix td, .risk-matrix th {
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+.risk-matrix th { color: var(--grc-navy); font-weight: 600; background: transparent; border: none; }
+.matrix-cell {
+  height: 92px;
+  width: 92px;
+  font-weight: 700;
+  color: #fff;
+  cursor: default;
+  position: relative;
+  padding: 4px;
+}
+.matrix-cell .cell-score { font-size: 1rem; opacity: 0.9; }
+.matrix-cell .cell-count { font-size: 1.35rem; }
+.matrix-cell.level-Low { background: var(--risk-low); }
+.matrix-cell.level-Medium { background: var(--risk-medium); }
+.matrix-cell.level-High { background: var(--risk-high); }
+.matrix-cell.level-Critical { background: var(--risk-critical); }
+.matrix-axis-label {
+  font-weight: 700;
+  color: var(--grc-navy);
+  font-size: 0.85rem;
+}
+
+/* ---------- Forms ---------- */
+.form-section-title {
+  font-weight: 700;
+  color: var(--grc-navy);
+  border-bottom: 2px solid var(--grc-card-border);
+  padding-bottom: 0.4rem;
+  margin: 1.5rem 0 1rem 0;
+}
+.form-section-title:first-child { margin-top: 0; }
+.calc-preview {
+  border: 2px dashed var(--grc-card-border);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  background: #fafbfc;
+}
+.calc-preview .calc-score { font-size: 2.2rem; font-weight: 800; color: var(--grc-navy); }
+
+/* ---------- Buttons ---------- */
+.btn-grc-primary {
+  background: var(--grc-navy-light);
+  border-color: var(--grc-navy-light);
+  color: #fff;
+}
+.btn-grc-primary:hover { background: var(--grc-navy); border-color: var(--grc-navy); color: #fff; }
+
+/* ---------- Utility ---------- */
+.text-navy { color: var(--grc-navy); }
+.iso-control-chip {
+  display: inline-block;
+  background: #eaf1f8;
+  color: var(--grc-navy-light);
+  border: 1px solid #cfe0ee;
+  border-radius: 999px;
+  padding: 0.25em 0.7em;
+  font-size: 0.78rem;
+  margin: 0.15rem;
+  font-weight: 600;
+}
+
+@media print {
+  .grc-navbar, .grc-footer, .no-print { display: none !important; }
+}
